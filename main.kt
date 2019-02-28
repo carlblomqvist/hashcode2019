@@ -7,9 +7,9 @@ object Hashcode {
 
     var nopdone = 0
 
-    var picture1 = Picture(0, setOf("Söt", "Sweet"), 'H')
-    var picture2 = Picture(1, setOf("Sweet", "Swag"), 'V')
-    var slide1 = Slide(setOf(picture1, picture2))
+    var picture1 = Picture(0, mutableSetOf(("Söt", "Sweet"), 'H')
+    var picture2 = Picture(1, mutableSetOf(("Sweet", "Swag"), 'V')
+    var slide1 = Slide(mutableSetOf(picture1, picture2))
     var slideshow = Slideshow(2, listOf(slide1))
 
 
@@ -40,6 +40,20 @@ object Hashcode {
         return
     }
 
+
+
+    // Scoring ! -------------------------------------
+    fun nrOfCommonTags(a: Picture, b: Picture): Int = setOf(a.tags.toString() + b.tags.toString()).size
+
+    fun nrOfUniqueInA(a: Picture, b: Picture): Int =
+            setOf(a.tags.toString() + b.tags.toString()).size - b.tags.size
+
+    fun nrOfUniqueInB(a: Picture, b: Picture): Int =
+            setOf(a.tags.toString() + b.tags.toString()).size - a.tags.size
+
+    fun score(a: Picture, b: Picture): Int =
+            minOf(nrOfCommonTags(a, b), nrOfUniqueInA(a, b), nrOfUniqueInB(a, b))
+
     override fun toString(): String{
         val str: StringBuilder = StringBuilder()
 
@@ -57,7 +71,6 @@ object Hashcode {
     }
 }
 
-
-data class Picture(val id: Int, val tags: Set<String>, val orientation: Char)
-data class Slide(val pictures: Set<Picture>)
+data class Picture(val id: Int, val tags: MutableSet<String>, val orientation: Char)
+data class Slide(val pictures: MutableSet<Picture>, val horizontal: Boolean = true)
 data class Slideshow(val nrOfSlides: Int, val slides: List<Slide>)
