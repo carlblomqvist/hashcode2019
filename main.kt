@@ -31,4 +31,5 @@ object Hashcode {
 }
 
 
-data class Picture(val id: Int, val tags: List<String>, val orientation: Char)
+data class Picture(val id: Int, val tags: Set<String>, val orientation: Char)
+data class Slideshow(val nrOfSlides: Int, val slides: List<List<Picture>>)
