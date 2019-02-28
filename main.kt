@@ -1,34 +1,33 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 
-class Hashcode {
+public class Hashcode {
 
     fun readFile(filename: String): List<String> = File(filename).readLines()
+    
+    var nopdone = 0
 
-    public static void main(String[] args) {
-        if (args.length != 1) {
-            System.out.println("You must give as an argument the name of the file to use.");
-            System.exit(1);
+    fun main(args:Array<String>) {
+
+        // if (args.length != 1) {
+        //     System.out.println("You must give as an argument the name of the file to use.");
+        //     System.exit(1);
+        // }
+
+        val lines = readFile(args[0]);
+
+        for (line in lines) {
+            algorithm(line)
+            nopdone++
         }
 
-        Scanner in = null;
-        try {
-            in = new Scanner(new File(args[0]));
-        } catch (FileNotFoundException e) {
-            System.out.println("The file " + args[0] + " is not found.");
-        }
-
-        for (;;) {
-            algorithm(in); // replace with algorithm
-            if (!in.hasNext()) break;
-        }
-
-        System.out.println("Ran " + nopdone + " calls to shortestPath. No bugs found.");
-        System.exit(0);
+        System.out.println("Ran " + nopdone + " calls to shortestPath. No bugs found.")
+        System.exit(0)
     }    
     
-    public fun algorithm() {
-        
+    public fun algorithm(line : String) {
+        println(line)
+        return
     }
 
 }
