@@ -1,13 +1,12 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 
-public class Hashcode {
-
+object Hashcode {
     fun readFile(filename: String): List<String> = File(filename).readLines()
-    
+
     var nopdone = 0
 
-    fun main(args:Array<String>) {
+    @JvmStatic fun main(args:Array<String>) {
 
         // if (args.length != 1) {
         //     System.out.println("You must give as an argument the name of the file to use.");
@@ -24,12 +23,12 @@ public class Hashcode {
         System.out.println("Ran " + nopdone + " calls to shortestPath. No bugs found.")
         System.exit(0)
     }    
-    
+
     public fun algorithm(line : String) {
         println(line)
         return
     }
-
 }
+
 
 data class Picture(val id: Int, val tags: List<String>, val orientation: Char)
