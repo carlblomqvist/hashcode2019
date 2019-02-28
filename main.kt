@@ -59,6 +59,9 @@ object Hashcode {
         var slides = ArrayList<Slide>()
         array.removeAt(0)
         for (i in array.indices) {
+            if (array[i].orientation == 'V') {
+                continue;
+            }
             if (i == 0) {
                 slides.add(array[i].toSlide())
                 array.removeAt(0)
