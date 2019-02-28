@@ -44,17 +44,20 @@ object Hashcode {
             nopdone++
         }
         
+        val showtime = algorithm()
+        
 
         System.out.println("Ran " + nopdone + " calls to toPicture.")
 
         System.out.println("\nSlideshow: \n")
-        System.out.println(toString())
+        System.out.println(toString(showtime))
         System.exit(0)
     }    
     
     public fun algorithm() : Slideshow {
         var idx = 0;
         var slides = ArrayList<Slide>()
+        array.removeAt(0)
         for (i in array.indices) {
             if (i == 0) {
                 slides.add(array[i].toSlide())
@@ -66,6 +69,7 @@ object Hashcode {
                            slides.add(array[j].toSlide()) 
                            array.removeAt(j)
                            idx++
+                           break;
                        }
                    }
                 }
@@ -97,7 +101,7 @@ object Hashcode {
         }
         val picture = Picture(id, tags, orientation)
         id++
-        println(picture)
+        // println(picture)
         return picture
         // println(line)
         // return
@@ -117,7 +121,7 @@ object Hashcode {
     fun score(a: Picture, b: Picture): Int =
             minOf(nrOfCommonTags(a, b), nrOfUniqueInA(a, b), nrOfUniqueInB(a, b))
 
-    override fun toString(): String{
+    fun toString(slideshow : Slideshow): String {
         val str: StringBuilder = StringBuilder()
 
         str.append(slideshow.nrOfSlides).append("\n")
