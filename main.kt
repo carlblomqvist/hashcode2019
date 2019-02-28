@@ -4,9 +4,17 @@ import java.io.FileNotFoundException;
 
 object Hashcode {
 
-    data class Picture(val id: Int, val tags: MutableSet<String>, val orientation: Char)
-    data class Slide(val pictures: Set<Picture>)
-    data class Slideshow(val nrOfSlides: Int, val slides: List<Slide>)
+    data class Picture(val id: Int, val tags: MutableSet<String>, val orientation: Char) {
+        fun toSlide() : Slide {
+            return Slide(this)
+        }
+    }
+    data class Slide @JvmOverloads constructor(val picture1: Picture, 
+                                               val picture2: Picture? = null)
+
+    // data class Slide(val picture: Picture)
+    // data class Slide(val picture1: Picture, val picture2: Picture)
+    data class Slideshow(val nrOfSlides: Int, val slides: ArrayList<Slide>)
 
     fun readFile(filename: String): List<String> = File(filename).readLines()
 
@@ -15,10 +23,10 @@ object Hashcode {
     var array = ArrayList<Picture>()
     var id = -1;
 
-    var picture1 = Picture(0, mutableSetOf(("Söt", "Sweet"), 'H')
-    var picture2 = Picture(1, mutableSetOf(("Sweet", "Swag"), 'V')
-    var slide1 = Slide(mutableSetOf(picture1, picture2))
-    var slideshow = Slideshow(2, listOf(slide1))
+    var picture1 = Picture(0, mutableSetOf("Söt", "Sweet"), 'H')
+    var picture2 = Picture(1, mutableSetOf("Sweet", "Swag"), 'V')
+    var slide1 = Slide(picture1, picture2)
+    var slideshow = Slideshow(2, arrayListOf(slide1))
 
 
     @JvmStatic fun main(args:Array<String>) {
@@ -35,6 +43,7 @@ object Hashcode {
             array.add(toPicture(line))
             nopdone++
         }
+        
 
         System.out.println("Ran " + nopdone + " calls to toPicture.")
 
@@ -42,6 +51,30 @@ object Hashcode {
         System.out.println(toString())
         System.exit(0)
     }    
+    
+    public fun algorithm() : Slideshow {
+        var idx = 0;
+        var slides = ArrayList<Slide>()
+        for (i in array.indices) {
+            if (i == 0) {
+                slides.add(array[i].toSlide())
+                array.removeAt(0)
+            } else {
+                for (j in array.indices) {
+                   for (tag in array[j].tags) {
+                       if (slides[idx].picture1.tags.contains(tag)) {
+                           slides.add(array[j].toSlide()) 
+                           array.removeAt(j)
+                           idx++
+                       }
+                   }
+                }
+            }
+            
+        }
+        return Slideshow(idx + 1, slides)
+        
+    }
 
     public fun toPicture(line : String) : Picture  {
         var dontCare = 0
@@ -89,10 +122,12 @@ object Hashcode {
 
         str.append(slideshow.nrOfSlides).append("\n")
         for (slide in slideshow.slides){
-            for (picture in slide.pictures) {
-                str.append(picture.id)
-                if (slide.pictures.size > 1)
-                    str.append(" ")
+            if (slide.picture2 == null) {
+                str.append(slide.picture1.id)
+            } else {
+                str.append(slide.picture1.id)
+                str.append(" ")
+                str.append(slide.picture2.id)
             }
             str.append("\n")
         }
@@ -100,7 +135,3 @@ object Hashcode {
         return str.toString()
     }
 }
-
-data class Picture(val id: Int, val tags: MutableSet<String>, val orientation: Char)
-data class Slide(val pictures: MutableSet<Picture>, val horizontal: Boolean = true)
-data class Slideshow(val nrOfSlides: Int, val slides: List<Slide>)
