@@ -32,3 +32,5 @@ class Hashcode {
     }
 
 }
+
+data class Picture(val id: Int, val tags: List<String>, val orientation: Char)
