@@ -24,10 +24,9 @@ object Hashcode {
     var id = -1;
 
     var picture1 = Picture(0, mutableSetOf("Söt", "Sweet"), 'H')
-    var picture2 = Picture(1, mutableSetOf("Sweet", "Swag"), 'V')
+    var picture2 = Picture(1, mutableSetOf("Sweet", "Swag", "Kul"), 'V')
     var slide1 = Slide(picture1, picture2)
     var slideshow = Slideshow(2, arrayListOf(slide1))
-
 
     @JvmStatic fun main(args:Array<String>) {
 
@@ -49,12 +48,14 @@ object Hashcode {
 
         System.out.println("Ran " + nopdone + " calls to toPicture.")
 
+        System.out.println("\nScore Test between ${picture1.tags} and ${picture2.tags}: " + score(picture1, picture2))
+
         System.out.println("\nSlideshow: \n")
         System.out.println(toString(showtime))
         System.exit(0)
     }    
     
-    public fun algorithm() : Slideshow {
+    fun algorithm() : Slideshow {
         var idx = 0;
         var slides = ArrayList<Slide>()
         array.removeAt(0)
@@ -80,7 +81,7 @@ object Hashcode {
         
     }
 
-    public fun toPicture(line : String) : Picture  {
+    fun toPicture(line : String) : Picture  {
         var dontCare = 0
         var orientation = 'N'
         var nrOfTags = 0
@@ -110,13 +111,30 @@ object Hashcode {
 
 
     // Scoring ! -------------------------------------
-    fun nrOfCommonTags(a: Picture, b: Picture): Int = setOf(a.tags.toString() + b.tags.toString()).size
+    fun nrOfCommonTags(a: Picture, b: Picture): Int {
+        val fullSize: Int = a.tags.size + b.tags.size
+        val set = mutableSetOf<String>()
 
-    fun nrOfUniqueInA(a: Picture, b: Picture): Int =
-            setOf(a.tags.toString() + b.tags.toString()).size - b.tags.size
+        set.addAll(a.tags + b.tags)
 
-    fun nrOfUniqueInB(a: Picture, b: Picture): Int =
-            setOf(a.tags.toString() + b.tags.toString()).size - a.tags.size
+        return fullSize - set.size
+    }
+
+    fun nrOfUniqueInA(a: Picture, b: Picture): Int {
+        val set = mutableSetOf<String>()
+
+        set.addAll(a.tags + b.tags)
+
+        return set.size - b.tags.size
+    }
+
+    fun nrOfUniqueInB(a: Picture, b: Picture): Int{
+        val set = mutableSetOf<String>()
+
+        set.addAll(a.tags + b.tags)
+
+        return set.size - a.tags.size
+    }
 
     fun score(a: Picture, b: Picture): Int =
             minOf(nrOfCommonTags(a, b), nrOfUniqueInA(a, b), nrOfUniqueInB(a, b))
