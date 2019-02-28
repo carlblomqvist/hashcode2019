@@ -22,12 +22,16 @@ object Hashcode {
 
         val lines = readFile(args[0]);
 
+
         for (line in lines) {
             algorithm(line)
             nopdone++
         }
 
         System.out.println("Ran " + nopdone + " calls to shortestPath. No bugs found.")
+
+        System.out.println("\nSlideshow: \n")
+        System.out.println(toString())
         System.exit(0)
     }    
 
@@ -36,13 +40,20 @@ object Hashcode {
         return
     }
 
-    fun showSlideshow(){
+    override fun toString(): String{
         val str: StringBuilder = StringBuilder()
 
-        str.append(slideshow.nrOfSlides)
-        for (slide in slideshow){
-            for ()
+        str.append(slideshow.nrOfSlides).append("\n")
+        for (slide in slideshow.slides){
+            for (picture in slide.pictures) {
+                str.append(picture.id)
+                if (slide.pictures.size > 1)
+                    str.append(" ")
+            }
+            str.append("\n")
         }
+
+        return str.toString()
     }
 }
 
