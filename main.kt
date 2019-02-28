@@ -1,19 +1,17 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 
-
 object Hashcode {
 
     data class Picture(val id: Int, val tags: MutableSet<String>, val orientation: Char) {
         fun toSlide() : Slide {
             return Slide(this)
         }
-    }
-    data class Slide @JvmOverloads constructor(val picture1: Picture, 
-                                               val picture2: Picture? = null)
 
-    // data class Slide(val picture: Picture)
-    // data class Slide(val picture1: Picture, val picture2: Picture)
+        fun equals(other : Picture): Boolean = this.id == other.id
+    }
+
+    data class Slide(val picture1: Picture, val picture2: Picture? = null)
     data class Slideshow(val nrOfSlides: Int, val slides: ArrayList<Slide>)
 
     fun readFile(filename: String): List<String> = File(filename).readLines()
@@ -21,12 +19,13 @@ object Hashcode {
     var nopdone = 0
     
     var array = ArrayList<Picture>()
-    var id = -1;
+    var id = 0
+
+    var firstLine = true
+    var nrOfPictures: Int = 0
 
     var picture1 = Picture(0, mutableSetOf("Söt", "Sweet"), 'H')
     var picture2 = Picture(1, mutableSetOf("Sweet", "Swag", "Kul"), 'V')
-    var slide1 = Slide(picture1, picture2)
-    var slideshow = Slideshow(2, arrayListOf(slide1))
 
     @JvmStatic fun main(args:Array<String>) {
 
@@ -35,34 +34,35 @@ object Hashcode {
         //     System.exit(1);
         // }
 
-        val lines = readFile(args[0]);
-
+        val lines = readFile(args[0])
 
         for (line in lines) {
+            if (firstLine) {
+                nrOfPictures = line.toInt()
+                firstLine = false
+                continue
+            }
             array.add(toPicture(line))
-            nopdone++
+            nopdone
         }
-        
-        val showtime = algorithm()
-        
+
+        val showtime = runAlgorithmNr(2)
 
         System.out.println("Ran " + nopdone + " calls to toPicture.")
 
         System.out.println("\nScore Test between ${picture1.tags} and ${picture2.tags}: " + score(picture1, picture2))
 
-        System.out.println("\nSlideshow: \n")
+        System.out.println("\nAlgoritm : \n")
         System.out.println(toString(showtime))
+
         System.exit(0)
     }    
     
     fun algorithm() : Slideshow {
-        var idx = 0;
+        var idx = 0
         var slides = ArrayList<Slide>()
-        array.removeAt(0)
+
         for (i in array.indices) {
-            if (array[i].orientation == 'V') {
-                continue;
-            }
             if (i == 0) {
                 slides.add(array[i].toSlide())
                 array.removeAt(0)
@@ -73,15 +73,47 @@ object Hashcode {
                            slides.add(array[j].toSlide()) 
                            array.removeAt(j)
                            idx++
-                           break;
+                           break
                        }
                    }
                 }
             }
             
         }
-        return Slideshow(idx + 1, slides)
-        
+        return Slideshow(idx+1, slides)
+    }
+
+    fun runAlgorithmNr(nr : Int) : Slideshow{
+        return when (nr) {
+            1 -> algorithm()
+            2 -> algorithm2(array)
+            else -> Slideshow(0, arrayListOf(Slide(picture1)))
+        }
+    }
+
+    // Algoritm som delar upp H och V bilder
+    fun algorithm2(pictures: ArrayList<Picture>) : Slideshow {
+        val verticalPictures : ArrayList<Picture> = ArrayList()
+        val horizontalPictures : ArrayList<Picture> = ArrayList()
+        val slides : ArrayList<Slide> = ArrayList()
+
+        for (picture in pictures)
+            if (picture.orientation == 'H')
+                horizontalPictures.add(picture)
+            else
+                verticalPictures.add(picture)
+
+        for (picture in horizontalPictures)
+            slides.add(Slide(picture))
+
+        for (index in (0 until verticalPictures.size - 1) step 2) {
+            slides.add(Slide(verticalPictures[index], verticalPictures[index + 1]))
+        }
+
+        if (verticalPictures.size % 2 != 0)
+            slides.add(Slide(verticalPictures.last()))
+
+        return (Slideshow(slides.size, slides))
     }
 
     fun toPicture(line : String) : Picture  {
@@ -92,28 +124,22 @@ object Hashcode {
         var current = line.split("\\s".toRegex())
         for (i in current.indices) {
             if (i == 0) {
-                try {
-                    dontCare = current[i].toInt()
-                } catch (e : NumberFormatException) {
-                    orientation = current[i][0]
-                }
+                orientation = current[i][0]
             } else if (i == 1) {
                 nrOfTags = current[i].toInt()
             } else {
                 tags.add(current[i])
             }
         }
+
         val picture = Picture(id, tags, orientation)
         id++
-        // println(picture)
+
         return picture
-        // println(line)
-        // return
     }
 
+    fun score(a: Picture, b: Picture): Int = minOf(nrOfCommonTags(a, b), nrOfUniqueInA(a, b), nrOfUniqueInB(a, b))
 
-
-    // Scoring ! -------------------------------------
     fun nrOfCommonTags(a: Picture, b: Picture): Int {
         val fullSize: Int = a.tags.size + b.tags.size
         val set = mutableSetOf<String>()
@@ -138,9 +164,6 @@ object Hashcode {
 
         return set.size - a.tags.size
     }
-
-    fun score(a: Picture, b: Picture): Int =
-            minOf(nrOfCommonTags(a, b), nrOfUniqueInA(a, b), nrOfUniqueInB(a, b))
 
     fun toString(slideshow : Slideshow): String {
         val str: StringBuilder = StringBuilder()
